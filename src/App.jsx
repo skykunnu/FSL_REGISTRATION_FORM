@@ -6,7 +6,28 @@ function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [otherCourse, setOtherCourse] = useState("");
+  const [role, setRole] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [completionYear, setCompletionYear] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [company, setCompany] = useState("");
+  const [localAddress, setLocalAddress] = useState('');
+  const [permanentAddress, setPermanentAddress] = useState('');
+  const [isSameAddress, setIsSameAddress] = useState(false); 
 
+
+  const handleCheckboxChange = () => {
+    setIsSameAddress(!isSameAddress);  // Toggle the checkbox state
+    if (!isSameAddress) {
+      setPermanentAddress(localAddress);  // Auto-fill Permanent Address
+    } else {
+      setPermanentAddress('');  // Clear Permanent Address if checkbox is unchecked
+    }
+  };
+
+  const handleRoleChange = (event) => {
+    setRole(event.target.value);
+  };
   const termsCondition = () => {
     console.log("Opening modal...");
     setModalOpen(true);
@@ -250,104 +271,188 @@ function App() {
                 </div>
 
                 <div className="card">
-                  <div className="card-header">Residential Details</div>
-                  <div className="card-body">
-                    <div className="form-group row">
-                      <label
-                        htmlFor="laddress"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Local Address
-                      </label>
-                      <div className="col-sm-10">
-                        <textarea
-                          className="form-control"
-                          name="laddress"
-                          id="laddress"
-                          placeholder="Enter your local address"
-                          required
-                        ></textarea>
-                      </div>
-                    </div>
+                <div className="card-header">Residential Details</div>
+        <div className="card-body">
+        
+          <div className="form-group row">
+            <label htmlFor="laddress" className="col-sm-2 col-form-label">Local Address</label>
+            <div className="col-sm-10">
+              <textarea
+                className="form-control"
+                name="laddress"
+                id="laddress"
+                placeholder="Enter your local address (Where you stay in jaipur)"
+                value={localAddress}
+                onChange={(e) => setLocalAddress(e.target.value)}
+                required
+              ></textarea>
+            </div>
+          </div>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="paddress"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Permanent Address
-                      </label>
-                      <div className="col-sm-10">
-                        <textarea
-                          className="form-control"
-                          name="paddress"
-                          id="paddress"
-                          placeholder="Enter your permanent address"
-                          required
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div>
+      
+          <div className="form-group row">
+            <label htmlFor="paddress" className="col-sm-2 col-form-label">Permanent Address</label>
+            <div className="col-sm-10">
+              <textarea
+                className="form-control"
+                name="paddress"
+                id="paddress"
+                placeholder="Enter your permanent address (address of your hometown)"
+                value={permanentAddress}
+                onChange={(e) => setPermanentAddress(e.target.value)}
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          
+          <div className="form-group row">
+            <div className="col-sm-10 offset-sm-2">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="sameAddress"
+                  checked={isSameAddress}
+                  onChange={handleCheckboxChange}  
+                />
+                <label className="form-check-label" htmlFor="sameAddress">
+                  Permanent address is the same as local address
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
                 </div>
 
                 <div className="card">
-                  <div className="card-header">Educational Details</div>
-                  <div className="card-body">
-                    <div className="form-group row">
-                      <label
-                        htmlFor="qualification"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Qualification
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="qualification"
-                          name="qualification"
-                          placeholder="Your latest qualification"
-                          required
-                        />
+                  <div className="card">
+                    <div className="card-header">Educational Details</div>
+                    <div className="card-body">
+                      <div className="form-group row">
+                        <label className="col-sm-2 col-form-label">
+                          Are you a:
+                        </label>
+                        <div className="col-sm-10">
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="role"
+                              value="student"
+                              checked={role === "student"}
+                              onChange={handleRoleChange}
+                            />
+                            <label className="form-check-label">Student</label>
+                          </div>
+                          <div className="form-check form-check-inline">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name="role"
+                              value="workingProfessional"
+                              checked={role === "workingProfessional"}
+                              onChange={handleRoleChange}
+                            />
+                            <label className="form-check-label">
+                              Working Professional
+                            </label>
+                          </div>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="qualificationYear"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Completion Year
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="qualificationYear"
-                          name="qualificationYear"
-                          placeholder="Completion Year"
-                          required
-                        />
-                      </div>
-                    </div>
+                      {/* Conditionally Render Inputs Based on Role Selection */}
+                      {role === "student" && (
+                        <>
+                          <div className="form-group row">
+                            <label
+                              htmlFor="qualification"
+                              className="col-sm-2 col-form-label"
+                            >
+                              Qualification
+                            </label>
+                            <div className="col-sm-10">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="qualification"
+                                value={qualification}
+                                onChange={(e) =>
+                                  setQualification(e.target.value)
+                                }
+                                placeholder="Enter your qualification"
+                                required
+                              />
+                            </div>
+                          </div>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="college"
-                        className="col-sm-2 col-form-label"
-                      >
-                        College / University
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="college"
-                          name="college"
-                          placeholder="College / University"
-                          required
-                        />
-                      </div>
+                          <div className="form-group row">
+                            <label
+                              htmlFor="completionYear"
+                              className="col-sm-2 col-form-label"
+                            >
+                              Completion Year
+                            </label>
+                            <div className="col-sm-10">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="completionYear"
+                                value={completionYear}
+                                onChange={(e) =>
+                                  setCompletionYear(e.target.value)
+                                }
+                                placeholder="Enter your completion year"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                      {role === "workingProfessional" && (
+                        <>
+                          <div className="form-group row">
+                            <label
+                              htmlFor="designation"
+                              className="col-sm-2 col-form-label"
+                            >
+                              Designation
+                            </label>
+                            <div className="col-sm-10">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="designation"
+                                value={designation}
+                                onChange={(e) => setDesignation(e.target.value)}
+                                placeholder="Enter your designation"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label
+                              htmlFor="company"
+                              className="col-sm-2 col-form-label"
+                            >
+                              Company
+                            </label>
+                            <div className="col-sm-10">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="company"
+                                value={company}
+                                onChange={(e) => setCompany(e.target.value)}
+                                placeholder="Enter your company name"
+                                required
+                              />
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
