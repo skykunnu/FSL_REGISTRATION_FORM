@@ -1,8 +1,21 @@
 import "./App.css";
 import { useState } from "react";
 import Modal from "./t&m_model.jsx";
+import "bootstrap/dist/css/bootstrap.min.css";
+// import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+// import InputGroup from "react-bootstrap/InputGroup";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+// import { CardBody } from "react-bootstrap";
 
-function App() {
+
+
+export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [otherCourse, setOtherCourse] = useState("");
@@ -14,7 +27,18 @@ function App() {
   const [localAddress, setLocalAddress] = useState('');
   const [permanentAddress, setPermanentAddress] = useState('');
   const [isSameAddress, setIsSameAddress] = useState(false); 
+  const [validated, setValidated] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  
+  const onSubmit = async (data) => {
+    const response = await axios.post("http://localhost:8080/register", data);
+    console.log(response);
+  };
 
   const handleCheckboxChange = () => {
     setIsSameAddress(!isSameAddress);  // Toggle the checkbox state
@@ -48,10 +72,10 @@ function App() {
   };
 
   return (
-    <>
-      <div id="wrapper">
-        <div className="container-fluid">
-          <div className="row">
+    
+      
+        <Container fluid>
+          <Row>
             <div
               className="success-msg alert alert-success alert-dismissible fade hide"
               role="alert"
@@ -67,246 +91,300 @@ function App() {
               </button>
             </div>
 
-            <div className="col-sm-12">
+            <Col sm={12}>
               <form
                 className="registration-form mb-3"
                 method="post"
                 action=""
                 encType="multipart/form-data"
               >
-                <div className="card">
-                  <div className="card-header">Personal Details</div>
-                  <div className="card-body">
-                    <div className="form-group row">
-                      <label htmlFor="name" className="col-sm-2 col-form-label">
+                <Card>
+                  <Card.Header>Personal Details</Card.Header>
+                  <Card.Body>
+                    <Form.Group className="form-group row mb-3">
+                      <Form.Label className="col-sm-2 col-form-label">
                         Name
-                      </label>
+                      </Form.Label>
                       <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="name"
-                          name="name"
-                          placeholder="Enter your full name"
-                          required
+                        <Form.Control
+                        type="text"
+                        placeholder="Enter your full name"
+                        id='name'
+                        name="name"
+                        isInvalid= {!!errors.name}
+                        autoFocus                      
+                        {...register("name", {
+                          required: "Full name is required",
+                          pattern: {
+                            value: /^[A-Za-z ]+$/,
+                            message:  "Full name can only contain letters and spaces", 
+                          },
+                          minLength: {
+                            value: 4,
+                            message:
+                              "Full name must be at least 4 characters long",
+                          },
+                          maxLength: {
+                            value: 30,
+                            message:
+                              "Full name must be at most 30 characters long",
+                          },
+                        })}
                         />
+                         {errors.name && (
+                      <Form.Control.Feedback type="invalid">
+                        {errors.name?.message}
+                      </Form.Control.Feedback>
+                    )}
                       </div>
-                    </div>
+                    </Form.Group>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="email"
-                        className="col-sm-2 col-form-label"
-                      >
+                    <Form.Group className="form-group row mb-3">
+                      <Form.Label className="col-sm-2 col-form-label">
                         Email
-                      </label>
+                      </Form.Label>
                       <div className="col-sm-10">
-                        <input
-                          type="email"
-                          className="form-control"
-                          id="email"
-                          name="email"
+                        <Form.Control
+                          type="text"
                           placeholder="Enter your email address"
-                          required
-                        />
+                          id='email'
+                          name='email'
+                          {...register('email',{
+                            required: true,
+                          })}
+                          />
+                          {errors.email && (
+                            <Form.Control.Feedback type='invalid'>
+                              Enter a valid email
+                            </Form.Control.Feedback>
+                          )}
                       </div>
-                    </div>
+                    </Form.Group>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="phone"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Phone
-                      </label>
+                    <Form.Group className="form-group row mb-3">
+                      <Form.Label className="col-sm-2 col-form-label" >
+                          Phone
+                      </Form.Label>                     
                       <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="phone"
-                          name="phone"
-                          placeholder="Enter your phone number"
-                          required
-                        />
-                      </div>
-                    </div>
+                        <Form.Control
+                        type="text"
+                        placeholder="Enter your phone number"
+                        id="phone"
+                        name="phone"
+                        {...register("phone", {
+                          required: true,
+                          pattern: /^[0-9]+$/,
+                          minLength: 10,
+                          maxLength: 10,
+                        })}
+                      />
+                     {errors.phone && (
+                      <Form.Control.Feedback type="invalid">
+                        Enter a proper phone number with 10 digits
+                      </Form.Control.Feedback>
+                    )}
+                  </div>
+                </Form.Group>
 
-                    <div className="form-group row">
-                      <label htmlFor="dob" className="col-sm-2 col-form-label">
+                    <Form.Group className="form-group row mb-3">
+                      <Form.Label className='col-sm-2 col-form-label'>
                         Date of Birth
-                      </label>
+                      </Form.Label>
                       <div className="col-sm-10">
-                        <input
-                          type="date"
-                          className="form-control"
-                          id="dob"
-                          name="dob"
-                          required
+                        <Form.Control
+                        type="date"
+                        placeholder="Enter your date of birth"
+                        id="dob"
+                        name="dob"
+                        {...register("dob", {
+                          required: true,
+                        })}
+                        />
+                          {errors.dob && (
+                      <Form.Control.Feedback type="invalid">
+                        Enter your Date of Birth
+                      </Form.Control.Feedback>
+                    )}
+                      </div>
+                    </Form.Group>
+
+                    <Form.Group className='form-group row mb-3'>
+                    <Form.Label className="col-sm-2 col-form-label">
+                    Gender
+                  </Form.Label>
+                      <div className="col-sm-10">
+                      {["radio"].map((type) => (
+                      <div key={`inline-${type}`} className="mb-3">
+                        <Form.Check
+                          inline
+                          label="Male"
+                          name="gender"
+                          type={type}
+                          id="male"
+                          {...register("gender", { required: true })}
+                          value="male"
+                        />
+                        <Form.Check
+                          inline
+                          label="Female"
+                          name="gender"
+                          type={type}
+                          id="female"
+                          {...register("gender", { required: true })}
+                          value="female"
+                        />
+                        <Form.Check
+                          inline
+                          label="Other"
+                          name="gender"
+                          type={type}
+                          id="other"
+                          {...register("gender", { required: true })}
+                          value="other"
                         />
                       </div>
-                    </div>
+                    ))}
+                      </div>
+                    </Form.Group>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="gender"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Gender
-                      </label>
-                      <div className="col-sm-10">
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="male"
-                            value="male"
-                            required
-                          />
-                          <label className="form-check-label" htmlFor="male">
-                            Male
-                          </label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="female"
-                            value="female"
-                            required
-                          />
-                          <label className="form-check-label" htmlFor="female">
-                            Female
-                          </label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            id="other"
-                            value="other"
-                            required
-                          />
-                          <label className="form-check-label" htmlFor="other">
-                            Other
-                          </label>
+
+                  <Form.Group className="form-group row mb-3">
+                  <Form.Label className="col-sm-2 col-form-label">
+                    Aadhaar Card
+                  </Form.Label>
+                  <div className="col-sm-10 row">
+                    <div className="col-sm-6">
+                      <Form.Control
+                        type="file"
+                        placeholder="Aadhaar Card Front"
+                        id="aadharFront"
+                        name="aadharFront"
+                        {...register("aadharFront", {
+                          required: true,
+                        })}
+                      />
+                      {errors.aadharFront && (
+                        <Form.Control.Feedback type="invalid">
+                          Upload Aadhaar Card Back Side Photo
+                        </Form.Control.Feedback>
+                      )}
+                      <small className="form-text text-muted">
+                        Upload a jpeg/jpg/png file of size not exceeding 4 MB.
+                      </small>
+                    </div>
+                    <div className="col-sm-6">
+                      <Form.Control
+                        type="file"
+                        placeholder="Aadhaar Card Back"
+                        id="aadharBack"
+                        name="aadharBack"
+                        {...register("aadharBack", {
+                          required: true,
+                        })}
+                      />
+                      {errors.aadharBack && (
+                        <Form.Control.Feedback type="invalid">
+                          Upload Aadhaar Card Back Side Photo
+                        </Form.Control.Feedback>
+                      )}
+                      <small className="form-text text-muted">
+                        Upload a jpeg/jpg/png file of size not exceeding 4 MB.
+                      </small>
                         </div>
                       </div>
-                    </div>
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+                 
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="aadharFront"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Aadhaar Card
-                      </label>
-                      <div className="col-sm-10 row">
-                        <div className="col-sm-6">
-                          <input
-                            type="file"
-                            className="form-control"
-                            id="aadharFront"
-                            name="aadharFront"
-                            required
-                          />
-                        </div>
-                        <div className="col-sm-6">
-                          <input
-                            type="file"
-                            className="form-control"
-                            id="aadharBack"
-                            name="aadharBack"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
+              <Card>
+                <Card.Header>Parent / Guardian Details</Card.Header>
+                <Card.Body>
+                <Form.Group className="form-group row mb-3">
+                  <Form.Label className="col-sm-2 col-form-label">
+                    Parent / Guardian / Spouse Name
+                  </Form.Label>
+                  <div className="col-sm-10">
+                  <Form.Control
+                      type="text"
+                      placeholder="Enter your parent / guardian / spouse name"
+                      id="fname"
+                      name="fname"
+                      autoFocus
+                      {...register("fname", {
+                        required: true,
+                        pattern: /^[A-Za-z ]+$/,
+                        minLength: 4,
+                        maxLength: 30,
+                      })}
+                    />
+                    {errors.fname && (
+                      <Form.Control.Feedback type="invalid">
+                        Parent name is required
+                      </Form.Control.Feedback>
+                    )}
                   </div>
-                </div>
+                </Form.Group>
 
-                <div className="card">
-                  <div className="card-header">Parent / Guardian Details</div>
-                  <div className="card-body">
-                    <div className="form-group row">
-                      <label
-                        htmlFor="fname"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Parent / Guardian Name
-                      </label>
+                <Form.Group className="form-group row mb-3">
+                <Form.Label className="col-sm-2 col-form-label">
+                    Parent / Guardian / Spouse Phone
+                  </Form.Label>
                       <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="fname"
-                          name="fname"
-                          placeholder="Enter your parent / guardian name"
-                          required
+                      <Form.Control
+                      type="text"
+                      placeholder="Enter your parent / guardian / spouse phone number"
+                      id="fphone"
+                      name="fphone"
+                      autoFocus
+                      {...register("fphone", {
+                        required: true,
+                        pattern: /^[0-9]+$/,
+                        minLength: 10,
+                        maxLength: 10,
+                      })}
                         />
+                         {errors.fname && (
+                      <Form.Control.Feedback type="invalid">
+                        Parent phone number is required
+                      </Form.Control.Feedback>
+                    )}
                       </div>
-                    </div>
+                    </Form.Group>
+                  </Card.Body>
+                  </Card>
 
-                    <div className="form-group row">
-                      <label
-                        htmlFor="fphone"
-                        className="col-sm-2 col-form-label"
-                      >
-                        Parent / Guardian Phone
-                      </label>
-                      <div className="col-sm-10">
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="fphone"
-                          name="fphone"
-                          placeholder="Enter your parent / guardian phone number"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              
 
-                <div className="card">
-                <div className="card-header">Residential Details</div>
-        <div className="card-body">
-        
-          <div className="form-group row">
-            <label htmlFor="laddress" className="col-sm-2 col-form-label">Local Address</label>
+
+                <Card>
+                <Card.Header>Residential Details</Card.Header>
+              <Card.Body>        
+              <Form.Group className="form-group row mb-3">
+            <Form.Label className="col-sm-2 col-form-label">Local Address</Form.Label>
             <div className="col-sm-10">
-              <textarea
-                className="form-control"
+              <Form.Control
+                type="text"
                 name="laddress"
                 id="laddress"
                 placeholder="Enter your local address (Where you stay in jaipur)"
-                value={localAddress}
-                onChange={(e) => setLocalAddress(e.target.value)}
-                required
-              ></textarea>
+                autoFocus
+                {...register('laddress', {
+                  required:true,
+                  pattern: /^[A-Za-z]+$/,
+                  minLength: 10,
+                  maxLength: 50,
+                })}
+              />
+              {errors.laddress && (
+                <Form.Control.Feedback type="invalid">
+                  Local Address is required
+                </Form.Control.Feedback>
+              )}
             </div>
-          </div>
+          </Form.Group>
 
-      
-          <div className="form-group row">
-            <label htmlFor="paddress" className="col-sm-2 col-form-label">Permanent Address</label>
-            <div className="col-sm-10">
-              <textarea
-                className="form-control"
-                name="paddress"
-                id="paddress"
-                placeholder="Enter your permanent address (address of your hometown)"
-                value={permanentAddress}
-                onChange={(e) => setPermanentAddress(e.target.value)}
-                required
-              ></textarea>
-            </div>
-          </div>
-
-          
-          <div className="form-group row">
+          <Form.Group className="form-group row mb-3">
             <div className="col-sm-10 offset-sm-2">
               <div className="form-check">
                 <input
@@ -316,14 +394,39 @@ function App() {
                   checked={isSameAddress}
                   onChange={handleCheckboxChange}  
                 />
-                <label className="form-check-label" htmlFor="sameAddress">
-                  Permanent address is the same as local address
-                </label>
+            <Form.Label className="col-sm-10 col-form-label"> Permanent address is same as local address</Form.Label> 
               </div>
             </div>
-          </div>
-        </div>
-                </div>
+          </Form.Group>
+      
+          <Form.Group className="form-group row mb-3">
+            <Form.Label className="col-sm-2 col-form-label">Permanent Address</Form.Label>
+            <div className="col-sm-10">
+            <Form.Control
+                type="text"
+                name="Paddress"
+                id="Paddress"
+                placeholder="Enter your Permanent address"
+                autoFocus
+                {...register('Paddress', {
+                  required:true,
+                  pattern: /^[A-Za-z]+$/,
+                  minLength: 10,
+                  maxLength: 50,
+                })}
+              />
+              {errors.laddress && (
+                <Form.Control.Feedback type="invalid">
+                  Permanent Address is required
+                </Form.Control.Feedback>
+              )}
+            </div>
+          </Form.Group>
+
+          
+          
+        </Card.Body>
+      </Card>
 
                 <div className="card">
                   <div className="card">
@@ -340,7 +443,7 @@ function App() {
                               type="radio"
                               name="role"
                               value="student"
-                              checked={role === "student"}
+                              checked="student"
                               onChange={handleRoleChange}
                             />
                             <label className="form-check-label">Student</label>
@@ -362,7 +465,7 @@ function App() {
                       </div>
 
                       {/* Conditionally Render Inputs Based on Role Selection */}
-                      {role === "student" && (
+                      {role === "student" || (
                         <>
                           <div className="form-group row">
                             <label
@@ -403,6 +506,28 @@ function App() {
                                   setCompletionYear(e.target.value)
                                 }
                                 placeholder="Enter your completion year"
+                                required
+                              />
+                            </div>
+                          </div>
+ 
+                          <div className="form-group row">
+                            <label
+                              htmlFor="completionYear"
+                              className="col-sm-2 col-form-label"
+                            >
+                              College / University
+                            </label>
+                            <div className="col-sm-10">
+                              <input
+                                type="text"
+                                className="form-control"
+                                id="college/university"
+                                value={completionYear}
+                                onChange={(e) =>
+                                  setCompletionYear(e.target.value)
+                                }
+                                placeholder="Enter your College/University name"
                                 required
                               />
                             </div>
@@ -645,14 +770,12 @@ function App() {
                   </div>
                 </div>
               </form>
+              </Col>
 
               {modalOpen && <Modal show={modalOpen} onClose={closeModal} />}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+          </Row>
+        </Container>
   );
 }
 
-export default App;
+
